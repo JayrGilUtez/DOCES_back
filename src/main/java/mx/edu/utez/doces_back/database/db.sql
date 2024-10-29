@@ -12,7 +12,7 @@ create table Person(
     `name` varchar(50) not null,
     `last_name` varchar(50) not null,
     -- Esta es la matrícula ej.20223TN066
-    `student_id` int not null UNIQUE
+    `student_id` varchar(100) not null UNIQUE
 );
 
 create table User(
