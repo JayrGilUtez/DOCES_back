@@ -7,7 +7,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -23,10 +22,6 @@ public class UserModel {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_role")
     private RoleModel role;
-
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_person")
-    private PersonModel person;
 
     public Integer getId() {
         return id;
@@ -66,14 +61,6 @@ public class UserModel {
 
     public void setRole(RoleModel role) {
         this.role = role;
-    }
-
-    public PersonModel getPerson() {
-        return person;
-    }
-
-    public void setPerson(PersonModel person) {
-        this.person = person;
     }
 
 }

@@ -7,21 +7,14 @@ create table Role(
     `name` varchar(30) not null UNIQUE
 );
 
-create table Person(
-    `id` int primary key auto_increment,
-    `name` varchar(50) not null,
-    `last_name` varchar(50) not null,
+CREATE TABLE user (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `name` VARCHAR (50) NOT NULL,
+    `lastname` VARCHAR (50) NOT NULL,
     -- Esta es la matrícula ej.20223TN066
-    `student_id` varchar(100) not null UNIQUE
-);
-
-create table User(
-    `id` int primary key auto_increment,
-    `username` varchar(50) not null UNIQUE,
-    `email` varchar(50) not null UNIQUE,
-    `password` varchar(256) not null,
-    `id_role` int not null,
-    `id_person` int not null,
-    foreign key(id_role) references Role(id),
-    foreign key(id_person) references Person(id)
+    `student_id` VARCHAR (50) NOT NULL UNIQUE,
+    `email` VARCHAR (100) NOT NULL UNIQUE,
+    `role_id` INT,
+    `password` VARCHAR(255) NOT NULL,
+    FOREIGN KEY (role_id) REFERENCES role(id)
 );
