@@ -1,4 +1,4 @@
-package mx.edu.utez.doces_back.utilities;
+package mx.edu.utez.doces_back.utils;
 
 import java.util.Date;
 import java.util.HashMap;
