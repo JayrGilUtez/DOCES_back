@@ -58,7 +58,7 @@ public class UserController {
             } else {
                 user.setName(request.getName());
                 user.setLastname(request.getLastname());
-                user.setStudentId(request.getStudentId());
+                user.setMatricula(request.getMatricula());
                 user.setEmail(request.getEmail());
                 user.setRole(request.getRole());
                 this.userService.save(user);

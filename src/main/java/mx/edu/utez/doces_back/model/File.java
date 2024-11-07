@@ -5,25 +5,21 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.HashSet;
-import java.util.Set;
-
 @Getter
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "roles")
-public class RoleModel {
-    @Id
+@Table(name = "files")
+public class File {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
     private Integer id;
-    private String name;
-    @OneToMany
-    @JoinColumn(name = "fk_user")
-    private Set<UserModel> users = new HashSet<>();
+    @Lob
+    private byte[] file;
 
-
-
+    @ManyToOne
+    @JoinColumn(name = "fk_document_request")
+    private DocumentRequest documentRequest;
 
 
 }
