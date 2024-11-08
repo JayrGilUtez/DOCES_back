@@ -22,6 +22,8 @@ public class UserModel {
     private String matricula;
     private String email;
     private String password;
+    private Integer cuatrimestre;
+    private Character grupo;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id")
     private RoleModel role;
