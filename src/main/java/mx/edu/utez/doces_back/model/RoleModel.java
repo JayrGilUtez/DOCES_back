@@ -22,8 +22,4 @@ public class RoleModel {
     @JoinColumn(name = "fk_user")
     private Set<UserModel> users = new HashSet<>();
 
-
-
-
-
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,11 +23,14 @@ import mx.edu.utez.doces_back.utils.Utilities;
 public class UserController {
 
     private final UserService userService;
+    private final BCryptPasswordEncoder passwordEncoder;
+
     private static final String RECORD_NOT_FOUND = "Record not found.";
     private static final String INTERNAL_SERVER_ERROR = "An internal server error occurred.";
 
-    UserController(UserService userService) {
+    UserController(UserService userService, BCryptPasswordEncoder passwordEncoder) {
         this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     // GetAll
@@ -42,8 +46,9 @@ public class UserController {
     }
 
     // Post
-    @PostMapping("/user")
+    @PostMapping("/register")
     public ResponseEntity<Object> createUser(@RequestBody UserModel request) {
+        request.setPassword(passwordEncoder.encode(request.getPassword()));
         this.userService.save(request);
         return Utilities.generateResponse(HttpStatus.OK, "Record created successfully.");
     }
@@ -77,7 +82,7 @@ public class UserController {
             if (user == null) {
                 return Utilities.generateResponse(HttpStatus.BAD_REQUEST, RECORD_NOT_FOUND);
             } else {
-                user.setPassword(request.getPassword());
+                user.setPassword(passwordEncoder.encode(request.getPassword()));
                 this.userService.save(user);
                 return Utilities.generateResponse(HttpStatus.OK, "Password updated successfully.");
             }
