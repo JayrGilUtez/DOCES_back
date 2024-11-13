@@ -27,15 +27,7 @@ public class UserModel {
     private RoleModel role;
 
     @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(
-            name = "user_requests",
-            joinColumns = @JoinColumn(name = "fk_user"),
-            inverseJoinColumns = @JoinColumn(name = "fk_document_request")
-    )
+    @JoinTable(name = "user_requests", joinColumns = @JoinColumn(name = "fk_user"), inverseJoinColumns = @JoinColumn(name = "fk_document_request"))
     private Set<DocumentRequest> documentRequests = new HashSet<>();
-
-
-
-
 
 }
