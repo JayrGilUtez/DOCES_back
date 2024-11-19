@@ -31,7 +31,7 @@ public class UserModel {
     private RoleModel role;
 
     @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-    @JoinTable(name = "user_requests", joinColumns = @JoinColumn(name = "fk_user_y"), inverseJoinColumns = @JoinColumn(name = "fk_document_request"))
+    @JoinTable(name = "user_requests", joinColumns = @JoinColumn(name = "fk_user"), inverseJoinColumns = @JoinColumn(name = "fk_document_request"))
     private Set<DocumentRequest> documentRequests = new HashSet<>();
 
     // Admin user
