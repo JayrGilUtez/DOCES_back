@@ -34,8 +34,5 @@ build/
 
 ### VS Code ###
 .vscode/
-# Ignore only the application.properties file in the resources directory
-/src/main/resources/application.properties
+application.properties
 
-# Ensure the resources directory is tracked
-!/src/main/resources/
