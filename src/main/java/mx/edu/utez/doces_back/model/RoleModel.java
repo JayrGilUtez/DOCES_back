@@ -19,7 +19,11 @@ public class RoleModel {
     private Integer id;
     private String name;
     @OneToMany
-    @JoinColumn(name = "fk_user")
     private Set<UserModel> users = new HashSet<>();
+
+    public RoleModel(String name) {
+        this.name = name;
+    }
+
 
 }
