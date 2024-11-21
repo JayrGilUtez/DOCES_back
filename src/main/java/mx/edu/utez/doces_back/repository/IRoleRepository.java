@@ -6,5 +6,4 @@ import mx.edu.utez.doces_back.model.RoleModel;
 import java.util.Optional;
 public interface IRoleRepository extends JpaRepository<RoleModel, Integer> {
     Optional<RoleModel> findByName(String name);
-    RoleModel save(String name);
 }
