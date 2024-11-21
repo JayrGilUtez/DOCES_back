@@ -14,8 +14,10 @@ public class File {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Integer id;
+    private String name;
+    private String type;
     @Lob
-    private byte[] file;
+    private byte[] data;
 
     @ManyToOne
     @JoinColumn(name = "fk_document_request")
