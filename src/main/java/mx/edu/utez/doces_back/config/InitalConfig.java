@@ -24,6 +24,8 @@ public class InitalConfig implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+        Optional<UserModel> adminUser = Optional.ofNullable(userRepository.findByEmail("admin@gmail.com"));
+        adminUser.ifPresent(userRepository::delete);
         roleRepository.deleteAll();
 
         RoleModel adminRole = getOrSave(new RoleModel("ROLE_ADMIN"));
