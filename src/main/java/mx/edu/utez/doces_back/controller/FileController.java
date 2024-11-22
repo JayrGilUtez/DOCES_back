@@ -23,19 +23,27 @@ public class FileController {
         try {
             return fileService.save(file);
         } catch (Exception e) {
-            return new ResponseEntity<>(new ApiResponse(HttpStatus.INTERNAL_SERVER_ERROR, true, "Error al subir el archivo"), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(
+                    new ApiResponse(
+                            HttpStatus.INTERNAL_SERVER_ERROR,
+                            true,
+                            "Error al subir el archivo"),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<byte[]> downloadFile(@PathVariable Integer id) {
         File file = fileService.findById(id);
-        if( file == null) {
-            return ResponseEntity.notFound().build();
+        if (file != null) {
+            return ResponseEntity.ok()
+                    .header(
+                            HttpHeaders.CONTENT_DISPOSITION,
+                            "attachment; filename=\"" + file.getName() + "\""
+                    ).body(file.getData());
         }
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getName() + "\"")
-                .body(file.getData());
+        return ResponseEntity.notFound().build();
+
     }
 
 }
