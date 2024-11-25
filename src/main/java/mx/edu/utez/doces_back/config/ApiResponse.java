@@ -1,5 +1,6 @@
 package mx.edu.utez.doces_back.config;
 
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -8,6 +9,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 @Setter
 @NoArgsConstructor
+
 public class ApiResponse {
     private Object data;
     private HttpStatus status;
@@ -24,4 +26,12 @@ public class ApiResponse {
         this.error = error;
         this.message = message;
     }
+
+
+    public ApiResponse(Object data, HttpStatus status, String message) {
+        this.data = data;
+        this.status = status;
+        this.message = message;
+    }
+
 }
