@@ -4,7 +4,8 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
-
+# Ignorar application.properties
+# application.properties
 
 ### STS ###
 .apt_generated
@@ -33,8 +34,5 @@ build/
 
 ### VS Code ###
 .vscode/
-# Ignore only the application.properties file in the resources directory
-/src/main/resources/application.properties
+src/main/resources/application.properties
 
-# Ensure the resources directory is tracked
-!/src/main/resources/
