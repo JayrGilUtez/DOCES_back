@@ -30,8 +30,10 @@ public class FileService {
         }
     }
 
-    public File findById(Integer id) {
-        return repository.findById(id).orElse(null);
+    public ResponseEntity<ApiResponse> findById (Integer id) {
+        return new ResponseEntity<>(new ApiResponse(repository.findById(id), HttpStatus.OK), HttpStatus.OK);
     }
+
+
 
 }
