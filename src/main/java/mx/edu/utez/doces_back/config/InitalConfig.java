@@ -24,20 +24,26 @@ public class InitalConfig implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+        RoleModel adminRole = new RoleModel();
+        adminRole.setId(1);
+        adminRole.setName("ROLE_ADMIN");
+        roleRepository.save(adminRole);
+
+        RoleModel userRole = new RoleModel();
+        userRole.setId(2);
+        userRole.setName("ROLE_USER");
+        roleRepository.save(userRole);
+
         Optional<UserModel> adminUser = Optional.ofNullable(userRepository.findByEmail("admin@gmail.com"));
-        adminUser.ifPresent(userRepository::delete);
-        roleRepository.deleteAll();
+        if (adminUser.isPresent()) {
+            userRepository.delete(adminUser.get());
+        }
 
-        RoleModel adminRole = getOrSave(new RoleModel("ROLE_ADMIN"));
-        RoleModel userRole = getOrSave(new RoleModel("ROLE_USER"));
-
-        // Create an admin user
         UserModel user = new UserModel();
         user.setName("Jayr Gil");
         user.setLastname("Galicia Jiménez");
         user.setEmail("admin@gmail.com");
         user.setPassword(passwordEncoder.encode("$4dmin_123!"));
-        // Set
         user.setRole(adminRole);
         userRepository.save(user);
 
