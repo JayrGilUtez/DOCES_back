@@ -1,5 +1,6 @@
 package mx.edu.utez.doces_back.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,6 +19,7 @@ public class DocumentRequest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private Integer user_id;
+    private String documentName;
     private Integer admin_id;
     private String status;
     private Integer id_formato_de_certificacion_de_estudios;
@@ -26,6 +28,7 @@ public class DocumentRequest {
     private Integer id_carta_libereacion_de_estadias;
 
     @ManyToMany(mappedBy = "documentRequests")
+    @JsonIgnore
     private Set<UserModel> userModels = new HashSet<>();
 
     @OneToMany(mappedBy = "documentRequest")
