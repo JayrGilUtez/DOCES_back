@@ -22,43 +22,43 @@ public class EmailService implements Email_Service_Interface {
     private final TemplateEngine templateEngine;
 
     public ResponseEntity<ApiResponse> sendEmail(String toEmail, String subject, String title, String messageContent, int type, MultipartFile file, String name) throws MessagingException {
-       try {
-           // Crear contexto de Thymeleaf
-           Context context = new Context();
-           context.setVariable("title", title);
-           context.setVariable("message", messageContent);
-           context.setVariable("name", name);
+        try {
+            // Crear contexto de Thymeleaf
+            Context context = new Context();
+            context.setVariable("title", title);
+            context.setVariable("message", messageContent);
+            context.setVariable("name", name);
 
 
-           String[] plantillaAlerta = new String[] {"alerta", "descarga", "verificacion"};
+            String[] plantillaAlerta = new String[] {"alerta", "descarga", "verificacion"};
 
-           // Procesar la plantilla y generar el contenido HTML
-           String htmlContent = templateEngine.process(plantillaAlerta[type], context);
+            // Procesar la plantilla y generar el contenido HTML
+            String htmlContent = templateEngine.process(plantillaAlerta[type], context);
 
-           // Crear el mensaje MIME
-           MimeMessage message = javaMailSender.createMimeMessage();
-           MimeMessageHelper helper = new MimeMessageHelper(message, true);
-           helper.setTo(toEmail);
-           helper.setSubject(subject);
-           helper.setText(htmlContent, true); // Indicar que el texto es HTML
-           helper.setFrom("utezdoces@gmail.com");  // Asegúrate de colocar aquí el correo del remitente
+            // Crear el mensaje MIME
+            MimeMessage message = javaMailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+            helper.setTo(toEmail);
+            helper.setSubject(subject);
+            helper.setText(htmlContent, true); // Indicar que el texto es HTML
+            helper.setFrom("utezdoces@gmail.com");  // Asegúrate de colocar aquí el correo del remitente
 
-           helper.addAttachment(file.getOriginalFilename(), file);
-           context.setVariable("fileCid", "attachment-" + file.getOriginalFilename());
+            helper.addAttachment(file.getOriginalFilename(), file);
+            context.setVariable("fileCid", "attachment-" + file.getOriginalFilename());
 
 
-           // Enviar el correo
-           javaMailSender.send(message);
-           System.out.println("Correo HTML enviado con éxito a " + toEmail);
+            // Enviar el correo
+            javaMailSender.send(message);
+            System.out.println("Correo HTML enviado con éxito a " + toEmail);
 
-           return new ResponseEntity<>(new ApiResponse(HttpStatus.OK,false,"El email se envio correctamente"),HttpStatus.OK) ;
+            return new ResponseEntity<>(new ApiResponse(HttpStatus.OK,false,"El email se envio correctamente"),HttpStatus.OK) ;
 
-       }catch (Exception e){
+        }catch (Exception e){
 
-           System.out.println(e);
-           return new ResponseEntity<>(new ApiResponse(HttpStatus.BAD_REQUEST,true,"No se envio el email"),HttpStatus.OK) ;
+            System.out.println(e);
+            return new ResponseEntity<>(new ApiResponse(HttpStatus.BAD_REQUEST,true,"No se envio el email"),HttpStatus.OK) ;
 
-       }
+        }
 
     }
 
