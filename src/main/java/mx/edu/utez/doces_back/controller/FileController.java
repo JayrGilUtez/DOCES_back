@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("api/file")
 public class FileController {
@@ -17,6 +19,20 @@ public class FileController {
     }
 
     @PostMapping("/")
+    public ResponseEntity<ApiResponse> uploadMultipleFiles(@RequestParam("files") List<MultipartFile> files, @RequestParam("documentRequestId") Integer documentRequestId) {
+        try {
+            return fileService.saveMultipleFiles(files, documentRequestId);
+        } catch (Exception e) {
+            return new ResponseEntity<>(
+                    new ApiResponse(
+                            HttpStatus.INTERNAL_SERVER_ERROR,
+                            true,
+                            "Error al subir los archivos"),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping("/upload")
     public ResponseEntity<ApiResponse> uploadFile(@RequestParam("file") MultipartFile file) {
         try {
             return fileService.save(file);
@@ -35,6 +51,12 @@ public class FileController {
         return fileService.findById(id);
 
     }
+
+    @GetMapping("/documentRequest/{documentRequestId}")
+    public ResponseEntity<ApiResponse> getFilesByDocumentRequestId(@PathVariable Integer documentRequestId) {
+        return fileService.findAllByDocumentRequestId(documentRequestId);
+    }
+
 
 
 }
