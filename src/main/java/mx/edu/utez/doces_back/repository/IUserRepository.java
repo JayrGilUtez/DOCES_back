@@ -8,4 +8,5 @@ public interface IUserRepository extends JpaRepository<UserModel, Integer> {
 
     UserModel findByEmail(String email);
 
+
 }
