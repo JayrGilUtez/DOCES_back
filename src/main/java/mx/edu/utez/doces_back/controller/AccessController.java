@@ -6,10 +6,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,6 +18,7 @@ import mx.edu.utez.doces_back.service.UserService;
 
 @RestController
 @RequestMapping("/api")
+@CrossOrigin(origins = "*")
 public class AccessController {
 
     private AuthenticationManager authenticationManager;
@@ -46,7 +44,9 @@ public class AccessController {
 
             UserModel user = this.userService.findByEmail(request.getEmail());
             String accessToken = this.jwtTokenUtil.generatedToken(user);
-            AuthResponse response = new AuthResponse(request.getEmail(), accessToken);
+            String role = user.getRole().getName();
+            Integer id = user.getId();
+            AuthResponse response = new AuthResponse(request.getEmail(),accessToken, role, id);
 
             return ResponseEntity.ok(response);
         } catch (BadCredentialsException e) {
