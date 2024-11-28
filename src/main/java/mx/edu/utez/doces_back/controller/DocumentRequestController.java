@@ -1,15 +1,11 @@
 package mx.edu.utez.doces_back.controller;
 
 
-
 import mx.edu.utez.doces_back.config.ApiResponse;
 import mx.edu.utez.doces_back.model.DocumentRequest;
 import mx.edu.utez.doces_back.service.DocumentRequestService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/v1/documentRequest")
@@ -20,9 +16,26 @@ public class DocumentRequestController {
         this.documentRequestService = documentRequestService;
     }
 
-    @PostMapping("/{userId}")
-    public ResponseEntity<ApiResponse> createDocumentRequest(@PathVariable Integer userId) {
-        return documentRequestService.createDocumentRequest(userId);
+    @PostMapping("/{userId}/{documentName}")
+    public ResponseEntity<ApiResponse> createDocumentRequest(@PathVariable Integer userId, @PathVariable String documentName) {
+        return documentRequestService.createDocumentRequest(userId, documentName);
+    }
+
+    @PutMapping("status/{documentRequestId}/{status}")
+    public ResponseEntity<ApiResponse> updateStatus(@PathVariable Integer documentRequestId, @PathVariable String status) {
+        return documentRequestService.updateStatus(documentRequestId, status);
+
+    }
+
+    @PutMapping("priority/{documentRequestId}/{priority}")
+    public ResponseEntity<ApiResponse> updatePriority(@PathVariable Integer documentRequestId, @PathVariable String priority) {
+        return documentRequestService.updatePriority(documentRequestId, priority);
+
+    }
+
+    @DeleteMapping("/{documentRequestId}")
+    public ResponseEntity<ApiResponse> deleteDocumentRequest(@PathVariable Integer documentRequestId) {
+        return documentRequestService.deleteDocumentRequest(documentRequestId);
     }
 
 

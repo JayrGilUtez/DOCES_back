@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class DocumentRequestService  {
+public class DocumentRequestService {
     private final IDocumentRequestRepository documentRequestRepository;
     private final IUserRepository userRepository;
 
@@ -23,16 +23,115 @@ public class DocumentRequestService  {
     }
 
     @Transactional
-    public ResponseEntity<ApiResponse> createDocumentRequest(Integer userId) {
+    public ResponseEntity<ApiResponse> createDocumentRequest(Integer userId, String documentName) {
         try {
-            UserModel user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
             DocumentRequest documentRequest = new DocumentRequest();
             documentRequest.setUser_id(userId);
+            documentRequest.setDocumentName(documentName);
+            documentRequest.setStatus("Pendiente");
             documentRequestRepository.save(documentRequest);
-            ApiResponse response = new ApiResponse(documentRequest, HttpStatus.CREATED, "Document request created successfully");
+            ApiResponse response = new ApiResponse(
+                    documentRequest,
+                    HttpStatus.CREATED,
+                    "Solicitud creada"
+            );
             return new ResponseEntity<>(response, HttpStatus.CREATED);
         } catch (Exception e) {
-            ApiResponse response = new ApiResponse(HttpStatus.INTERNAL_SERVER_ERROR, true, "Failed to create document request");
+            ApiResponse response = new ApiResponse(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    true,
+                    "Error al crear solicitud"
+            );
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Transactional
+    public ResponseEntity<ApiResponse> updateStatus(Integer documentRequestId, String status) {
+        try {
+            Optional<DocumentRequest> optional = documentRequestRepository.findById(documentRequestId);
+            DocumentRequest documentRequest = optional.orElse(null);
+            if (documentRequest != null) {
+                documentRequest.setStatus(status);
+                ApiResponse response = new ApiResponse(
+                        HttpStatus.OK,
+                        false,
+                        "Se actualizo el status de la solicutd");
+                return new ResponseEntity<>(response, HttpStatus.OK);
+
+            } else {
+                ApiResponse response = new ApiResponse(
+                        HttpStatus.NOT_FOUND,
+                        true,
+                        "Solicitud no encontrada");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
+
+        } catch (Exception e) {
+            ApiResponse response = new ApiResponse(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    true,
+                    "Fallo al actualizar el estatus de la solicitud");
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Transactional
+    public ResponseEntity<ApiResponse> updatePriority(Integer documentRequestId, String priority) {
+        try {
+            Optional<DocumentRequest> optional = documentRequestRepository.findById(documentRequestId);
+            DocumentRequest documentRequest = optional.orElse(null);
+            if (documentRequest != null) {
+                documentRequest.setPriority(priority);
+                ApiResponse response = new ApiResponse(
+                        HttpStatus.OK,
+                        false,
+                        "Se actualizo la prioridad de la solicutd");
+                return new ResponseEntity<>(response, HttpStatus.OK);
+
+            } else {
+                ApiResponse response = new ApiResponse(
+                        HttpStatus.NOT_FOUND,
+                        true,
+                        "Solicitud no encontrada");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
+
+        } catch (Exception e) {
+            ApiResponse response = new ApiResponse(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    true,
+                    "Fallo al actualizar la prioridad de la solicitud");
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Transactional
+    public ResponseEntity<ApiResponse> deleteDocumentRequest(Integer documentRequestId) {
+        try {
+            Optional<DocumentRequest> optional = documentRequestRepository.findById(documentRequestId);
+            if (optional.isPresent()) {
+                documentRequestRepository.deleteById(documentRequestId);
+                ApiResponse response = new ApiResponse(
+                        HttpStatus.OK,
+                        false,
+                        "Solicitud eliminada exitosamente"
+                );
+                return new ResponseEntity<>(response, HttpStatus.OK);
+            } else {
+                ApiResponse response = new ApiResponse(
+                        HttpStatus.NOT_FOUND,
+                        true,
+                        "Solicitud no encontrada"
+                );
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            ApiResponse response = new ApiResponse(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    true,
+                    "Fallo al eliminar la solicitud"
+            );
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
