@@ -79,7 +79,7 @@ public class EmailService implements Email_Service_Interface {
             helper.setText(personalizedMessage, true);
             helper.setFrom("utezdoces@gmail.com");
 
-            // ENviar correo
+            // Enviar correo
             javaMailSender.send(message);
             return new ResponseEntity<>(Utilities.generateResponse(HttpStatus.OK, "Correo enviado correctamente"), HttpStatus.OK);
         } catch (Exception e) {

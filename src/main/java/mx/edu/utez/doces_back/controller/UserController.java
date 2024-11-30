@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import mx.edu.utez.doces_back.dto.PasswordDTO;
 import mx.edu.utez.doces_back.model.PasswordResetToken;
 import mx.edu.utez.doces_back.repository.IPasswordResetToken;
 import mx.edu.utez.doces_back.service.email.EmailService;
@@ -98,7 +97,7 @@ public class UserController {
             String token = UUID.randomUUID().toString();
             userService.savePasswordResetToken(user, token);
 
-            String resetLink = "" + token;
+            String resetLink = "http://localhost:5173/reset-password/" + token;
             emailService.sendPasswordEmail(
                     email,
                     "Recupera tu contraseña",
@@ -106,7 +105,7 @@ public class UserController {
                     "Haz clic en el enlace para recuperar tu contraseña: <a href='" + resetLink + "'>Recuperar contraseña</a>",
                     "Carlos"
             );
-            return new ResponseEntity<>(Utilities.generateResponse(HttpStatus.OK, "Mail sent successfully"), HttpStatus.OK);
+            return new ResponseEntity<>(Utilities.generateResponse(HttpStatus.OK, "Token: " + token), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(Utilities.generateResponse(HttpStatus.BAD_REQUEST, INTERNAL_SERVER_ERROR), HttpStatus.BAD_REQUEST);
         }
@@ -123,9 +122,8 @@ public class UserController {
     }
 
     // Reset Password
-    @PostMapping("/reset-password")
-    public ResponseEntity<Object> resetPassword(@RequestBody Map<String, String> request) {
-        String token = request.get("token");
+    @PostMapping("/reset-password/{token}")
+    public ResponseEntity<Object> resetPassword(@PathVariable String token, @RequestBody Map<String, String> request) {
         String newPassword = request.get("password");
         PasswordResetToken resetToken = passwordRepository.findByToken(token);
         if (resetToken == null || resetToken.getExpiryDate().isBefore(LocalDateTime.now())) {
