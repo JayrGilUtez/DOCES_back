@@ -35,13 +35,11 @@ public class UserModel {
     private Set<DocumentRequest> documentRequests = new HashSet<>();
 
     // Admin user
-    public UserModel(String name, String lastname, String email, String password, RoleModel role){
+    public UserModel(String name, String lastname, String email, String password, RoleModel role) {
         this.name = name;
         this.lastname = lastname;
         this.email = email;
         this.password = password;
         this.role = role;
     }
-
-
 }
