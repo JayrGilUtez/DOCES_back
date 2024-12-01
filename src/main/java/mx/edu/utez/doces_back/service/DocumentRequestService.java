@@ -3,50 +3,66 @@ package mx.edu.utez.doces_back.service;
 import jakarta.transaction.Transactional;
 import mx.edu.utez.doces_back.config.ApiResponse;
 import mx.edu.utez.doces_back.model.DocumentRequest;
+import mx.edu.utez.doces_back.model.File;
 import mx.edu.utez.doces_back.model.UserModel;
 import mx.edu.utez.doces_back.repository.IDocumentRequestRepository;
+import mx.edu.utez.doces_back.repository.IFileRepository;
 import mx.edu.utez.doces_back.repository.IUserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class DocumentRequestService {
     private final IDocumentRequestRepository documentRequestRepository;
     private final IUserRepository userRepository;
+    private final IFileRepository fileRepository;
 
-    public DocumentRequestService(IDocumentRequestRepository documentRequestRepository, IUserRepository userRepository) {
+    public DocumentRequestService(IDocumentRequestRepository documentRequestRepository, IUserRepository userRepository, IFileRepository fileRepository) {
         this.documentRequestRepository = documentRequestRepository;
         this.userRepository = userRepository;
+        this.fileRepository = fileRepository;
     }
 
     @Transactional
-    public ResponseEntity<ApiResponse> createDocumentRequest(Integer userId, String documentName) {
+    public ResponseEntity<ApiResponse> createDocumentRequest(Integer userId, String documentName, List<MultipartFile> files) {
         try {
             DocumentRequest documentRequest = new DocumentRequest();
             documentRequest.setUser_id(userId);
             documentRequest.setDocumentName(documentName);
-            documentRequest.setStatus("Pendiente");
-            documentRequestRepository.save(documentRequest);
-            ApiResponse response = new ApiResponse(
-                    documentRequest,
-                    HttpStatus.CREATED,
-                    "Solicitud creada"
-            );
-            return new ResponseEntity<>(response, HttpStatus.CREATED);
+            DocumentRequest savedDocumentRequest = documentRequestRepository.save(documentRequest);
+
+            if (files != null && !files.isEmpty()) {
+                List<File> savedFiles = files.stream().map(file -> {
+                    File newFile = new File();
+                    try {
+                        newFile.setName(file.getOriginalFilename());
+                        newFile.setType(file.getContentType());
+                        newFile.setData(file.getBytes());
+                        newFile.setDocumentRequest(savedDocumentRequest);
+                    } catch (IOException e) {
+                        throw new RuntimeException("Failed to store file", e);
+                    }
+                    return fileRepository.save(newFile);
+                }).toList();
+
+                savedDocumentRequest.setFiles(new HashSet<>(savedFiles));
+                documentRequestRepository.save(savedDocumentRequest);
+            }
+
+            return new ResponseEntity<>(new ApiResponse(savedDocumentRequest, HttpStatus.OK), HttpStatus.OK);
         } catch (Exception e) {
-            ApiResponse response = new ApiResponse(
-                    HttpStatus.INTERNAL_SERVER_ERROR,
-                    true,
-                    "Error al crear solicitud"
-            );
-            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new ApiResponse(HttpStatus.INTERNAL_SERVER_ERROR, true, "Failed to create document request"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
     @Transactional
     public ResponseEntity<ApiResponse> updateStatus(Integer documentRequestId, String status) {
         try {

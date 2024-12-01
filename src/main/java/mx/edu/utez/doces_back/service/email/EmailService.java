@@ -1,9 +1,10 @@
 package mx.edu.utez.doces_back.service.email;
 
+import lombok.AllArgsConstructor;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
-import lombok.AllArgsConstructor;
 import mx.edu.utez.doces_back.config.ApiResponse;
+import mx.edu.utez.doces_back.repository.IEmailService;
 import mx.edu.utez.doces_back.utils.Utilities;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,48 +17,36 @@ import org.thymeleaf.context.Context;
 
 @Service
 @AllArgsConstructor
-public class EmailService implements Email_Service_Interface {
+public class EmailService implements IEmailService {
 
     private final JavaMailSender javaMailSender;
     private final TemplateEngine templateEngine;
     public static final String INTERNAL_SERVER_ERROR = "An internal server error occurred.";
 
-    public ResponseEntity<ApiResponse> sendEmail(String toEmail, String subject, String title, String messageContent, int type, MultipartFile file, String name) throws MessagingException {
+    public ResponseEntity<ApiResponse> sendEmail(String toEmail, String subject, String title, String messageContent,
+            int type, MultipartFile file, String name) throws MessagingException {
         try {
-            // Crear contexto de Thymeleaf
             Context context = new Context();
             context.setVariable("title", title);
             context.setVariable("message", messageContent);
             context.setVariable("name", name);
-
-
-            String[] plantillaAlerta = new String[]{"alerta", "descarga", "verificacion"};
-
-            // Procesar la plantilla y generar el contenido HTML
+            String[] plantillaAlerta = new String[] { "alerta", "descarga", "verificacion" };
             String htmlContent = templateEngine.process(plantillaAlerta[type], context);
-
-            // Crear el mensaje MIME
             MimeMessage message = javaMailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
             helper.setTo(toEmail);
             helper.setSubject(subject);
-            helper.setText(htmlContent, true); // Indicar que el texto es HTML
-            helper.setFrom("utezdoces@gmail.com");  // Asegúrate de colocar aquí el correo del remitente
+            helper.setText(htmlContent, true);
+            helper.setFrom("utezdoces@gmail.com");
 
             helper.addAttachment(file.getOriginalFilename(), file);
             context.setVariable("fileCid", "attachment-" + file.getOriginalFilename());
-
-
-            // Enviar el correo
             javaMailSender.send(message);
-            System.out.println("Correo HTML enviado con éxito a " + toEmail);
-
-            return new ResponseEntity<>(new ApiResponse(HttpStatus.OK, false, "El email se envio correctamente"), HttpStatus.OK);
-
+            return new ResponseEntity<>(new ApiResponse(HttpStatus.OK, false, "El email se envio correctamente"),
+                    HttpStatus.OK);
         } catch (Exception e) {
-
-            System.out.println(e);
-            return new ResponseEntity<>(new ApiResponse(HttpStatus.BAD_REQUEST, true, "No se envio el email"), HttpStatus.OK);
+            return new ResponseEntity<>(new ApiResponse(HttpStatus.BAD_REQUEST, true, "No se envio el email"),
+                    HttpStatus.OK);
 
         }
 
@@ -73,9 +62,11 @@ public class EmailService implements Email_Service_Interface {
             helper.setText(personalizedMessage, true);
             helper.setFrom("utezdoces@gmail.com");
             javaMailSender.send(message);
-            new ResponseEntity<>(Utilities.generateResponse(HttpStatus.OK, "Correo enviado correctamente"), HttpStatus.OK);
+            new ResponseEntity<>(Utilities.generateResponse(HttpStatus.OK, "Correo enviado correctamente"),
+                    HttpStatus.OK);
         } catch (Exception e) {
-            new ResponseEntity<>(Utilities.generateResponse(HttpStatus.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+            new ResponseEntity<>(Utilities.generateResponse(HttpStatus.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

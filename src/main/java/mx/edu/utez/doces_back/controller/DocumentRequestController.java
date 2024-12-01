@@ -3,10 +3,16 @@ package mx.edu.utez.doces_back.controller;
 
 import mx.edu.utez.doces_back.config.ApiResponse;
 import mx.edu.utez.doces_back.model.DocumentRequest;
+import mx.edu.utez.doces_back.model.File;
 import mx.edu.utez.doces_back.service.DocumentRequestService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.nio.file.Files;
+import java.util.List;
+import java.util.Set;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,8 +28,13 @@ public class DocumentRequestController {
     }
 
     @PostMapping("/{userId}/{documentName}")
-    public ResponseEntity<ApiResponse> createDocumentRequest(@PathVariable Integer userId, @PathVariable String documentName) {
-        return documentRequestService.createDocumentRequest(userId, documentName);
+    public ResponseEntity<ApiResponse> createDocumentRequest(
+            @PathVariable Integer userId,
+            @PathVariable String documentName,
+            @RequestParam(value = "files", required = false) List<MultipartFile> files
+    )
+    {
+        return documentRequestService.createDocumentRequest(userId, documentName, files);
     }
 
     @PutMapping("status/{documentRequestId}/{status}")
