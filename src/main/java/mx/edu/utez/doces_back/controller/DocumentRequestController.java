@@ -27,7 +27,7 @@ public class DocumentRequestController {
     public ResponseEntity<ApiResponse> createDocumentRequest(
             @PathVariable Integer userId,
             @PathVariable String documentName,
-            @RequestParam("files") List<MultipartFile> files
+            @RequestParam(value = "files", required = false) List<MultipartFile> files
     )
     {
         return documentRequestService.createDocumentRequest(userId, documentName, files);
