@@ -63,6 +63,45 @@ public class EmailService implements Email_Service_Interface {
 
     }
 
+
+    public ResponseEntity<ApiResponse> sendEmail_alert(String toEmail, String subject, String title, String messageContent, int type) throws MessagingException {
+        try {
+            // Crear contexto de Thymeleaf
+            Context context = new Context();
+            context.setVariable("title", title);
+            context.setVariable("message", messageContent);
+
+
+
+            String[] plantillaAlerta = new String[] {"alerta", "descarga", "verificacion"};
+
+            // Procesar la plantilla y generar el contenido HTML
+            String htmlContent = templateEngine.process(plantillaAlerta[type], context);
+
+            // Crear el mensaje MIME
+            MimeMessage message = javaMailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+            helper.setTo(toEmail);
+            helper.setSubject(subject);
+            helper.setText(htmlContent, true); // Indicar que el texto es HTML
+            helper.setFrom("utezdoces@gmail.com");  // Asegúrate de colocar aquí el correo del remitente
+
+            // Enviar el correo
+            javaMailSender.send(message);
+            System.out.println("Correo HTML enviado con éxito a " + toEmail);
+
+            return new ResponseEntity<>(new ApiResponse(HttpStatus.OK,false,"El email se envio correctamente"),HttpStatus.OK) ;
+
+        }catch (Exception e){
+
+            System.out.println(e);
+            return new ResponseEntity<>(new ApiResponse(HttpStatus.BAD_REQUEST,true,"No se envio el email"),HttpStatus.OK) ;
+
+        }
+
+    }
+
+
     public ResponseEntity<Object> sendPasswordEmail(String toEmail, String title, String subject, String messageContent, String name) {
         try {
             // Creamos mensaje MIME
@@ -78,6 +117,7 @@ public class EmailService implements Email_Service_Interface {
             helper.setSubject(subject);
             helper.setText(personalizedMessage, true);
             helper.setFrom("utezdoces@gmail.com");
+
 
             // Enviar correo
             javaMailSender.send(message);
