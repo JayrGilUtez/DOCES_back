@@ -7,7 +7,7 @@ import java.util.UUID;
 
 import mx.edu.utez.doces_back.model.PasswordResetToken;
 import mx.edu.utez.doces_back.repository.IPasswordResetToken;
-import mx.edu.utez.doces_back.service.email.EmailService;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import mx.edu.utez.doces_back.model.RoleModel;
 import mx.edu.utez.doces_back.model.UserModel;
 import mx.edu.utez.doces_back.repository.IRoleRepository;
+import mx.edu.utez.doces_back.service.EmailService;
 import mx.edu.utez.doces_back.service.UserService;
 import mx.edu.utez.doces_back.utils.Utilities;
 

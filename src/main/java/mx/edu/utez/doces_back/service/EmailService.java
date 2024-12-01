@@ -1,4 +1,4 @@
-package mx.edu.utez.doces_back.service.email;
+package mx.edu.utez.doces_back.service;
 
 import lombok.AllArgsConstructor;
 import jakarta.mail.MessagingException;
@@ -68,5 +68,15 @@ public class EmailService implements IEmailService {
             new ResponseEntity<>(Utilities.generateResponse(HttpStatus.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR),
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    public void sendErrorNotification(String email, String errorMessage) throws MessagingException {
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
+        helper.setTo(email);
+        helper.setSubject("Notificación de error");
+        helper.setText("Se ha detectado un error en los datos: " + errorMessage);
+
+        javaMailSender.send(mimeMessage);
     }
 }
