@@ -21,33 +21,35 @@ public class EmailController {
 
     @PostMapping("/sendEmail")
 
-    public ResponseEntity<ApiResponse> senderEmail(@RequestParam("toEmail")String email,@RequestParam("subject")String subject, @RequestParam("title")String title,@RequestParam("messageContent")String messageContent,@RequestParam("type")int type, @RequestParam(required = false, value = "file")  MultipartFile file  ,@RequestParam("name") String name) throws MessagingException {
+    public ResponseEntity<ApiResponse> senderEmail(@RequestParam("toEmail")String email,
+                                                   @RequestParam("subject")String subject,
+                                                   @RequestParam("title")String title,
+                                                   @RequestParam("messageContent")String messageContent,
+                                                   @RequestParam("type")int type,
+                                                   @RequestParam(required = false, value = "file")  MultipartFile file,
+                                                   @RequestParam("name") String name) throws MessagingException {
 
-            return emailService.sendEmail(email,subject,title,messageContent,type, file,name);
+        return emailService.sendEmail(email,subject,title,messageContent,type, file,name);
 
     }
 
     @PostMapping("/sendEmail-alert")
-    public ResponseEntity<ApiResponse> senderEmail2(@RequestParam("toEmail")String email,@RequestParam("subject")String subject, @RequestParam("title")String title,@RequestParam("messageContent")String messageContent,@RequestParam("type")int type ,@RequestParam("name") String name) throws MessagingException {
 
-        return emailService.sendEmail_alert(email,subject,title,messageContent,type);
-
-    }
-
-
-
-
-    public ResponseEntity<ApiResponse>
-    senderEmail(@RequestParam("toEmail")
-                String email,
+    public ResponseEntity<ApiResponse> senderEmailalert(
+                @RequestParam("toEmail")String email,
                 @RequestParam("subject") String subject,
                 @RequestParam("title") String title,
                 @RequestParam("messageContent") String messageContent,
-                @RequestParam("type") int type,
-                @RequestParam("file") MultipartFile file,
-                @RequestParam("name") String name) throws MessagingException {
-        return emailService
-                .sendEmail(email, subject, title, messageContent, type, file, name);
+                @RequestParam("type") int type
+               ) throws MessagingException {
+
+
+        return emailService.sendEmail_alert(email, subject, title, messageContent, type);
     }
+
+
+
+
+
 
 }

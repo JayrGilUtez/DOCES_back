@@ -25,9 +25,9 @@ public class EmailConfig {
         properties.put("mail.smtp.starttls.enable", "true");
         properties.put("mail.smtp.host", "smtp.gmail.com");
         properties.put("mail.smtp.port", "587");
-        properties.put("mail.smtp.connectiontimeout", "5000");
-        properties.put("mail.smtp.timeout", "3000");
-        properties.put("mail.smtp.writetimeout", "5000");
+        properties.put("mail.smtp.connectiontimeout", "10000"); // Incrementado
+        properties.put("mail.smtp.timeout", "10000");           // Incrementado
+        properties.put("mail.smtp.writetimeout", "10000");      // Incrementado
         properties.put("mail.smtp.ssl.trust", "smtp.gmail.com");
         properties.put("mail.smtp.ssl.protocols", "TLSv1.2");
         return properties;
