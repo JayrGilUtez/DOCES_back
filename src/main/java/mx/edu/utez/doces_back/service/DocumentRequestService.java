@@ -29,6 +29,9 @@ public class DocumentRequestService {
             documentRequest.setUser_id(userId);
             documentRequest.setDocumentName(documentName);
             documentRequest.setStatus("Pendiente");
+            documentRequest.setPriority("Alta");
+
+            documentRequest.setAdmin_id(1);
             documentRequestRepository.save(documentRequest);
             ApiResponse response = new ApiResponse(
                     documentRequest,
