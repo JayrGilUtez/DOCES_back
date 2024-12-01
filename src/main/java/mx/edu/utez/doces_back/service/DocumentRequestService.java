@@ -40,21 +40,23 @@ public class DocumentRequestService {
             documentRequest.setDocumentName(documentName);
             DocumentRequest savedDocumentRequest = documentRequestRepository.save(documentRequest);
 
-            List<File> savedFiles = files.stream().map(file -> {
-                File newFile = new File();
-                try {
-                    newFile.setName(file.getOriginalFilename());
-                    newFile.setType(file.getContentType());
-                    newFile.setData(file.getBytes());
-                    newFile.setDocumentRequest(savedDocumentRequest);
-                } catch (IOException e) {
-                    throw new RuntimeException("Failed to store file", e);
-                }
-                return fileRepository.save(newFile);
-            }).collect(Collectors.toList());
+            if (files != null && !files.isEmpty()) {
+                List<File> savedFiles = files.stream().map(file -> {
+                    File newFile = new File();
+                    try {
+                        newFile.setName(file.getOriginalFilename());
+                        newFile.setType(file.getContentType());
+                        newFile.setData(file.getBytes());
+                        newFile.setDocumentRequest(savedDocumentRequest);
+                    } catch (IOException e) {
+                        throw new RuntimeException("Failed to store file", e);
+                    }
+                    return fileRepository.save(newFile);
+                }).toList();
 
-            savedDocumentRequest.setFiles(new HashSet<>(savedFiles));
-            documentRequestRepository.save(savedDocumentRequest);
+                savedDocumentRequest.setFiles(new HashSet<>(savedFiles));
+                documentRequestRepository.save(savedDocumentRequest);
+            }
 
             return new ResponseEntity<>(new ApiResponse(savedDocumentRequest, HttpStatus.OK), HttpStatus.OK);
         } catch (Exception e) {
