@@ -1,4 +1,4 @@
-package mx.edu.utez.doces_back.controller.EmailController;
+package mx.edu.utez.doces_back.controller;
 
 import jakarta.mail.MessagingException;
 import jakarta.servlet.annotation.MultipartConfig;
@@ -10,11 +10,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("api/email")
-@CrossOrigin(origins = { "*" })
+@RequestMapping("/api")
+@CrossOrigin(origins = "*")
 @AllArgsConstructor
 @MultipartConfig
-
 public class EmailController {
 
     private EmailService emailService;
