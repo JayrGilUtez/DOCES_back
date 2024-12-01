@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -137,7 +138,46 @@ public class DocumentRequestService {
     }
 
     @Transactional
-    public Optional<DocumentRequest> findById(Integer id) {
-        return documentRequestRepository.findById(id);
+    public List<DocumentRequest> findAll() {
+        return documentRequestRepository.findAll();
+    }
+
+    public ResponseEntity<DocumentRequest> findById(Integer id) {
+        Optional<DocumentRequest> documentRequest = documentRequestRepository.findById(id);
+        if (documentRequest.isPresent()) {
+            return new ResponseEntity<>(documentRequest.get(), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+
+    @Transactional
+    public ResponseEntity<ApiResponse> updateAdminId(Integer documentRequestId, Integer adminId) {
+        try {
+            Optional<DocumentRequest> optional = documentRequestRepository.findById(documentRequestId);
+            DocumentRequest documentRequest = optional.orElse(null);
+            if (documentRequest != null) {
+                documentRequest.setAdmin_id(adminId);
+                documentRequestRepository.save(documentRequest);
+                ApiResponse response = new ApiResponse(
+                        HttpStatus.OK,
+                        false,
+                        "Admin ID updated successfully");
+                return new ResponseEntity<>(response, HttpStatus.OK);
+            } else {
+                ApiResponse response = new ApiResponse(
+                        HttpStatus.NOT_FOUND,
+                        true,
+                        "DocumentRequest not found");
+                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            ApiResponse response = new ApiResponse(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    true,
+                    "Failed to update Admin ID");
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
