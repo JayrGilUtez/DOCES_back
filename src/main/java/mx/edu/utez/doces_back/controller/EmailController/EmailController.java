@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("/api")
-@CrossOrigin(origins = "*")
+@RequestMapping("api/email")
+@CrossOrigin(origins = { "*" })
 @AllArgsConstructor
 @MultipartConfig
 
@@ -20,34 +20,14 @@ public class EmailController {
     private EmailService emailService;
 
     @PostMapping("/sendEmail")
-
-    public ResponseEntity<ApiResponse> senderEmail(@RequestParam("toEmail")String email,@RequestParam("subject")String subject, @RequestParam("title")String title,@RequestParam("messageContent")String messageContent,@RequestParam("type")int type, @RequestParam(required = false, value = "file")  MultipartFile file  ,@RequestParam("name") String name) throws MessagingException {
-
-            return emailService.sendEmail(email,subject,title,messageContent,type, file,name);
-
-    }
-
-    @PostMapping("/sendEmail-alert")
-    public ResponseEntity<ApiResponse> senderEmail2(@RequestParam("toEmail")String email,@RequestParam("subject")String subject, @RequestParam("title")String title,@RequestParam("messageContent")String messageContent,@RequestParam("type")int type ,@RequestParam("name") String name) throws MessagingException {
-
-        return emailService.sendEmail_alert(email,subject,title,messageContent,type);
-
-    }
-
-
-
-
-    public ResponseEntity<ApiResponse>
-    senderEmail(@RequestParam("toEmail")
-                String email,
-                @RequestParam("subject") String subject,
-                @RequestParam("title") String title,
-                @RequestParam("messageContent") String messageContent,
-                @RequestParam("type") int type,
-                @RequestParam("file") MultipartFile file,
-                @RequestParam("name") String name) throws MessagingException {
+    public ResponseEntity<ApiResponse> senderEmail(@RequestParam("toEmail") String email,
+            @RequestParam("subject") String subject,
+            @RequestParam("title") String title,
+            @RequestParam("messageContent") String messageContent,
+            @RequestParam("type") int type,
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("name") String name) throws MessagingException {
         return emailService
                 .sendEmail(email, subject, title, messageContent, type, file, name);
     }
-
 }
