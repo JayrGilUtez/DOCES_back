@@ -1,7 +1,6 @@
 package mx.edu.utez.doces_back.service.email;
 
 import jakarta.mail.MessagingException;
-import jakarta.mail.Multipart;
 import jakarta.mail.internet.MimeMessage;
 import lombok.AllArgsConstructor;
 import mx.edu.utez.doces_back.config.ApiResponse;
@@ -21,6 +20,7 @@ public class EmailService implements Email_Service_Interface {
 
     private final JavaMailSender javaMailSender;
     private final TemplateEngine templateEngine;
+    public static final String INTERNAL_SERVER_ERROR = "An internal server error occurred.";
 
     public ResponseEntity<ApiResponse> sendEmail(String toEmail, String subject, String title, String messageContent, int type, MultipartFile file, String name) throws MessagingException {
         try {
@@ -63,27 +63,19 @@ public class EmailService implements Email_Service_Interface {
 
     }
 
-    public ResponseEntity<Object> sendPasswordEmail(String toEmail, String title, String subject, String messageContent, String name) {
+    public void sendSimpleEmail(String toEmail, String title, String subject, String messageContent) {
         try {
-            // Creamos mensaje MIME
             MimeMessage message = javaMailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
-
-            // Contenido del correo
-            String personalizedMessage = "<h1>" + title + "</h1>" + "<p>Hola " + name + ",</p>"
-                    + "<p>" + messageContent + "</p>";
-
-            // Configurar detalles del correo
+            String personalizedMessage = "<h1>" + title + "</h1>" + "<p>" + messageContent + "</p>";
             helper.setTo(toEmail);
             helper.setSubject(subject);
             helper.setText(personalizedMessage, true);
             helper.setFrom("utezdoces@gmail.com");
-
-            // Enviar correo
             javaMailSender.send(message);
-            return new ResponseEntity<>(Utilities.generateResponse(HttpStatus.OK, "Correo enviado correctamente"), HttpStatus.OK);
+            new ResponseEntity<>(Utilities.generateResponse(HttpStatus.OK, "Correo enviado correctamente"), HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(Utilities.generateResponse(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+            new ResponseEntity<>(Utilities.generateResponse(HttpStatus.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
