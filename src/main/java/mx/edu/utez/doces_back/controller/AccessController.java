@@ -21,14 +21,14 @@ import mx.edu.utez.doces_back.service.UserService;
 @CrossOrigin(origins = "*")
 public class AccessController {
 
-    private AuthenticationManager authenticationManager;
-    private JwtTokenUtil jwtTokenUtil;
-    private UserService userService;
+    private final AuthenticationManager authenticationManager;
+    private final JwtTokenUtil jwtTokenUtil;
+    private final UserService userService;
 
     private static final Logger logger = LoggerFactory.getLogger(AccessController.class);
 
     AccessController(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil,
-            mx.edu.utez.doces_back.service.UserService usuarioService) {
+                     mx.edu.utez.doces_back.service.UserService usuarioService) {
         this.authenticationManager = authenticationManager;
         this.jwtTokenUtil = jwtTokenUtil;
         this.userService = usuarioService;
@@ -46,7 +46,7 @@ public class AccessController {
             String accessToken = this.jwtTokenUtil.generatedToken(user);
             String role = user.getRole().getName();
             Integer id = user.getId();
-            AuthResponse response = new AuthResponse(request.getEmail(),accessToken, role, id);
+            AuthResponse response = new AuthResponse(request.getEmail(), accessToken, role, id);
 
             return ResponseEntity.ok(response);
         } catch (BadCredentialsException e) {

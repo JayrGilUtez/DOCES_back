@@ -27,10 +27,10 @@ public class UserController {
     private final IRoleRepository repository;
     private final IPasswordResetToken passwordRepository;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final EmailService emailService;
 
     private static final String RECORD_NOT_FOUND = "Record not found.";
     private static final String INTERNAL_SERVER_ERROR = "An internal server error occurred.";
-    private final EmailService emailService;
 
     UserController(UserService userService, BCryptPasswordEncoder passwordEncoder, IRoleRepository repository, EmailService emailService, IPasswordResetToken passwordRepository) {
         this.userService = userService;
@@ -52,16 +52,32 @@ public class UserController {
         return this.userService.findById(id);
     }
 
-    // Post
+    // Register
     @PostMapping("/register")
     public ResponseEntity<Object> createUser(@RequestBody UserModel request) {
-        String defaultRoleName = "ROLE_USER";
-        RoleModel defaultRole = repository.findByName(defaultRoleName)
-                .orElseThrow(() -> new RuntimeException("Default role not found"));
-        request.setRole(defaultRole);
-        request.setPassword(passwordEncoder.encode(request.getPassword()));
-        this.userService.save(request);
-        return Utilities.generateResponse(HttpStatus.OK, "Record created successfully.");
+        try {
+            String defaultRoleName = "ROLE_USER";
+            RoleModel defaultRole = repository.findByName(defaultRoleName)
+                    .orElseThrow(() -> new RuntimeException("Default role not found"));
+
+            request.setRole(defaultRole);
+            request.setPassword(passwordEncoder.encode(request.getPassword()));
+            this.userService.save(request);
+
+            String title = "Bienvenido " + request.getName();
+            String subject = "¡Te has registrado exitosamente en el sistema DOCES!";
+            String message =
+                    "<h2>¡Te damos la más cordial bienvenida al sistema DOCES!</h2>" +
+                            "<p>Tu registro se ha completado exitosamente. Ahora podrás acceder a una plataforma donde gestionarás de manera " +
+                            "sencilla y eficiente tus documentos escolares.</p>" +
+                            "<p>Recuerda mantener tus credenciales seguras y no compartirlas con nadie.</p>" +
+                            "<h3>Atentamente,</h3>" +
+                            "<h3>El equipo de DOCES</h3>";
+            emailService.sendSimpleEmail(request.getEmail(), title, subject, message);
+            return Utilities.generateResponse(HttpStatus.OK, "Record created successfully.");
+        } catch (Exception e) {
+            return Utilities.generateResponse(HttpStatus.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR);
+        }
     }
 
     // Put
@@ -98,12 +114,11 @@ public class UserController {
             userService.savePasswordResetToken(user, token);
 
             String resetLink = "http://localhost:5173/reset-password/" + token;
-            emailService.sendPasswordEmail(
+            emailService.sendSimpleEmail(
                     email,
                     "Recupera tu contraseña",
                     "Recuperación de contraseña",
-                    "Haz clic en el enlace para recuperar tu contraseña: <a href='" + resetLink + "'>Recuperar contraseña</a>",
-                    "Carlos"
+                    "Haz clic en el enlace para recuperar tu contraseña: <a href='" + resetLink + "'>Recuperar contraseña</a>"
             );
             return new ResponseEntity<>(Utilities.generateResponse(HttpStatus.OK, "Token: " + token), HttpStatus.OK);
         } catch (Exception e) {
