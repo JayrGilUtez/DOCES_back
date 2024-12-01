@@ -5,6 +5,7 @@ import jakarta.mail.Multipart;
 import jakarta.mail.internet.MimeMessage;
 import lombok.AllArgsConstructor;
 import mx.edu.utez.doces_back.config.ApiResponse;
+import mx.edu.utez.doces_back.utils.Utilities;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -30,7 +31,7 @@ public class EmailService implements Email_Service_Interface {
             context.setVariable("name", name);
 
 
-            String[] plantillaAlerta = new String[] {"alerta", "descarga", "verificacion"};
+            String[] plantillaAlerta = new String[]{"alerta", "descarga", "verificacion"};
 
             // Procesar la plantilla y generar el contenido HTML
             String htmlContent = templateEngine.process(plantillaAlerta[type], context);
@@ -51,16 +52,38 @@ public class EmailService implements Email_Service_Interface {
             javaMailSender.send(message);
             System.out.println("Correo HTML enviado con éxito a " + toEmail);
 
-            return new ResponseEntity<>(new ApiResponse(HttpStatus.OK,false,"El email se envio correctamente"),HttpStatus.OK) ;
+            return new ResponseEntity<>(new ApiResponse(HttpStatus.OK, false, "El email se envio correctamente"), HttpStatus.OK);
 
-        }catch (Exception e){
+        } catch (Exception e) {
 
             System.out.println(e);
-            return new ResponseEntity<>(new ApiResponse(HttpStatus.BAD_REQUEST,true,"No se envio el email"),HttpStatus.OK) ;
+            return new ResponseEntity<>(new ApiResponse(HttpStatus.BAD_REQUEST, true, "No se envio el email"), HttpStatus.OK);
 
         }
 
     }
 
+    public ResponseEntity<Object> sendPasswordEmail(String toEmail, String title, String subject, String messageContent, String name) {
+        try {
+            // Creamos mensaje MIME
+            MimeMessage message = javaMailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true);
 
+            // Contenido del correo
+            String personalizedMessage = "<h1>" + title + "</h1>" + "<p>Hola " + name + ",</p>"
+                    + "<p>" + messageContent + "</p>";
+
+            // Configurar detalles del correo
+            helper.setTo(toEmail);
+            helper.setSubject(subject);
+            helper.setText(personalizedMessage, true);
+            helper.setFrom("utezdoces@gmail.com");
+
+            // Enviar correo
+            javaMailSender.send(message);
+            return new ResponseEntity<>(Utilities.generateResponse(HttpStatus.OK, "Correo enviado correctamente"), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(Utilities.generateResponse(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

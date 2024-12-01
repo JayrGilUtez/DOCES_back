@@ -52,6 +52,8 @@ public class Security {
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers("/api/login").permitAll()
                 .requestMatchers("/api/register").permitAll()
+                .requestMatchers("/api/recover-password-email").permitAll()
+                .requestMatchers("/api/reset-password/{token}").permitAll()
                 .requestMatchers("/api/file").authenticated()
                 .requestMatchers("/api/documentRequest").authenticated()
                 .anyRequest().authenticated());
