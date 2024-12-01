@@ -28,7 +28,7 @@ public class AccessController {
     private static final Logger logger = LoggerFactory.getLogger(AccessController.class);
 
     AccessController(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil,
-            mx.edu.utez.doces_back.service.UserService usuarioService) {
+                     mx.edu.utez.doces_back.service.UserService usuarioService) {
         this.authenticationManager = authenticationManager;
         this.jwtTokenUtil = jwtTokenUtil;
         this.userService = usuarioService;
