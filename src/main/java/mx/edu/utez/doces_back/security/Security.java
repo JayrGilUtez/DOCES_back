@@ -1,5 +1,6 @@
 package mx.edu.utez.doces_back.security;
 
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -48,9 +49,13 @@ public class Security {
                                 (request, response, ex) -> response.sendError(HttpServletResponse.SC_UNAUTHORIZED)));
         http.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
         http.authorizeHttpRequests(authorize -> authorize
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers("/api/login").permitAll()
                 .requestMatchers("/api/register").permitAll()
+                .requestMatchers("/api/recover-password-email").permitAll()
+                .requestMatchers("/api/reset-password/{token}").permitAll()
                 .requestMatchers("/api/file").authenticated()
+                .requestMatchers("/api/documentRequest").authenticated()
                 .anyRequest().authenticated());
         return http.build();
     }
