@@ -18,7 +18,6 @@ public class DocumentRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private Integer user_id;
     private String documentName;
     private Integer admin_id;
     private String status;
@@ -28,9 +27,11 @@ public class DocumentRequest {
     private Integer id_constancia_de_no_adeudo;
     private Integer id_carta_libereacion_de_estadias;
 
-    @ManyToMany(mappedBy = "documentRequests")
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
     @JsonIgnore
-    private Set<UserModel> userModels = new HashSet<>();
+    private UserModel user;
 
     @OneToMany(mappedBy = "documentRequest")
     private Set<File> files = new HashSet<>();
