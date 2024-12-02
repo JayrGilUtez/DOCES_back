@@ -40,6 +40,7 @@ public class InitalConfig implements CommandLineRunner {
         }
 
         UserModel user = new UserModel();
+        user.setId(1);
         user.setName("Jayr Gil");
         user.setLastname("Galicia Jiménez");
         user.setEmail("admin@gmail.com");
