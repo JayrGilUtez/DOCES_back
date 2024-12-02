@@ -4,6 +4,7 @@ package mx.edu.utez.doces_back.controller;
 import mx.edu.utez.doces_back.config.ApiResponse;
 import mx.edu.utez.doces_back.model.DocumentRequest;
 import mx.edu.utez.doces_back.model.File;
+import mx.edu.utez.doces_back.model.UserModel;
 import mx.edu.utez.doces_back.service.DocumentRequestService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -72,6 +73,11 @@ public class DocumentRequestController {
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<DocumentRequest>> getAllDocumentRequestsByUserId(@PathVariable Integer userId) {
         return documentRequestService.findAllByUserId(userId);
+    }
+
+    @GetMapping("/user/byDocumentRequest/{documentRequestId}")
+    public ResponseEntity<UserModel> getUserByDocumentRequestId(@PathVariable Integer documentRequestId) {
+        return documentRequestService.findUserByDocumentRequestId(documentRequestId);
     }
 
 
