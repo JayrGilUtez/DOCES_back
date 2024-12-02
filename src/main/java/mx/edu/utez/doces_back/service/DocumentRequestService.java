@@ -244,4 +244,14 @@ public class DocumentRequestService {
         return new ResponseEntity<>(documentRequests, HttpStatus.OK);
     }
 
+    public ResponseEntity<UserModel> findUserByDocumentRequestId(Integer documentRequestId) {
+        Optional<DocumentRequest> documentRequestOptional = documentRequestRepository.findById(documentRequestId);
+        if (documentRequestOptional.isPresent()) {
+            UserModel user = documentRequestOptional.get().getUser();
+            return new ResponseEntity<>(user, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
 }
