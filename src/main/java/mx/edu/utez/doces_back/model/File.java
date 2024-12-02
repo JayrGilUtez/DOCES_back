@@ -1,5 +1,6 @@
 package mx.edu.utez.doces_back.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,6 +21,7 @@ public class File {
 
     @ManyToOne
     @JoinColumn(name = "fk_document_request")
+    @JsonIgnore
     private DocumentRequest documentRequest;
 
 

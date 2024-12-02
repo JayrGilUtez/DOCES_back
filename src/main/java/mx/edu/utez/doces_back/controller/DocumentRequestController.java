@@ -5,6 +5,7 @@ import mx.edu.utez.doces_back.config.ApiResponse;
 import mx.edu.utez.doces_back.model.DocumentRequest;
 import mx.edu.utez.doces_back.model.File;
 import mx.edu.utez.doces_back.service.DocumentRequestService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,6 +23,8 @@ public class DocumentRequestController {
     public DocumentRequestController(DocumentRequestService documentRequestService) {
         this.documentRequestService = documentRequestService;
     }
+
+
 
     @PostMapping("/{userId}/{documentName}")
     public ResponseEntity<ApiResponse> createDocumentRequest(
@@ -49,6 +52,28 @@ public class DocumentRequestController {
     public ResponseEntity<ApiResponse> deleteDocumentRequest(@PathVariable Integer documentRequestId) {
         return documentRequestService.deleteDocumentRequest(documentRequestId);
     }
+
+    @GetMapping("/")
+    public ResponseEntity<List<DocumentRequest>> getAllDocumentRequests() {
+        List<DocumentRequest> documentRequests = documentRequestService.findAll();
+        return new ResponseEntity<>(documentRequests, HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<DocumentRequest> getDocumentRequestById(@PathVariable Integer id) {
+        return documentRequestService.findById(id);
+    }
+
+    @PutMapping("admin/{documentRequestId}/{adminId}")
+    public ResponseEntity<ApiResponse> updateAdminId(@PathVariable Integer documentRequestId, @PathVariable Integer adminId) {
+        return documentRequestService.updateAdminId(documentRequestId, adminId);
+    }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<DocumentRequest>> getAllDocumentRequestsByUserId(@PathVariable Integer userId) {
+        return documentRequestService.findAllByUserId(userId);
+    }
+
 
 
 }
