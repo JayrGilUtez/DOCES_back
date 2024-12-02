@@ -24,33 +24,29 @@ public class EmailService implements IEmailService {
     public static final String INTERNAL_SERVER_ERROR = "An internal server error occurred.";
 
     public ResponseEntity<ApiResponse> sendEmail(String toEmail, String subject, String title, String messageContent,
-            int type, MultipartFile file, String name) throws MessagingException {
+                                                 MultipartFile file) throws MessagingException {
         try {
             Context context = new Context();
             context.setVariable("title", title);
             context.setVariable("message", messageContent);
-            context.setVariable("name", name);
-            String[] plantillaAlerta = new String[] { "alerta", "descarga", "verificacion" };
-            String htmlContent = templateEngine.process(plantillaAlerta[type], context);
+            String htmlContent = templateEngine.process("alerta", context);
             MimeMessage message = javaMailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
             helper.setTo(toEmail);
             helper.setSubject(subject);
             helper.setText(htmlContent, true);
             helper.setFrom("utezdoces@gmail.com");
-
             helper.addAttachment(file.getOriginalFilename(), file);
             context.setVariable("fileCid", "attachment-" + file.getOriginalFilename());
             javaMailSender.send(message);
-            return new ResponseEntity<>(new ApiResponse(HttpStatus.OK, false, "El email se envio correctamente"),
+            return new ResponseEntity<>(new ApiResponse(HttpStatus.OK, false, "El email se envió correctamente"),
                     HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(new ApiResponse(HttpStatus.BAD_REQUEST, true, "No se envio el email"),
+            return new ResponseEntity<>(new ApiResponse(HttpStatus.BAD_REQUEST, true, "No se envió el email"),
                     HttpStatus.OK);
-
         }
-
     }
+
 
     public void sendSimpleEmail(String toEmail, String title, String subject, String messageContent) {
         try {
