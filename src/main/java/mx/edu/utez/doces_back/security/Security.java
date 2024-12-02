@@ -56,6 +56,7 @@ public class Security {
                 .requestMatchers("/api/reset-password/{token}").permitAll()
                 .requestMatchers("/api/file").authenticated()
                 .requestMatchers("/api/documentRequest").authenticated()
+                .requestMatchers("api/sendEmail").authenticated()
                 .anyRequest().authenticated());
         return http.build();
     }
