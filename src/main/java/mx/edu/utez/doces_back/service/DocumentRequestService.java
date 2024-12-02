@@ -8,6 +8,8 @@ import mx.edu.utez.doces_back.model.UserModel;
 import mx.edu.utez.doces_back.repository.IDocumentRequestRepository;
 import mx.edu.utez.doces_back.repository.IFileRepository;
 import mx.edu.utez.doces_back.repository.IUserRepository;
+import mx.edu.utez.doces_back.service.email.EmailService;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -26,12 +28,14 @@ public class DocumentRequestService {
     private final IUserRepository userRepository;
     private final UserService userService;
     private final IFileRepository fileRepository;
+    private final EmailService emailService;
 
-    public DocumentRequestService(IDocumentRequestRepository documentRequestRepository, IUserRepository userRepository, UserService userService, IFileRepository fileRepository) {
+    public DocumentRequestService(IDocumentRequestRepository documentRequestRepository, IUserRepository userRepository, UserService userService, IFileRepository fileRepository, EmailService emailService) {
         this.documentRequestRepository = documentRequestRepository;
         this.userRepository = userRepository;
         this.userService = userService;
         this.fileRepository = fileRepository;
+        this.emailService = emailService;
     }
 
     @Transactional
@@ -62,6 +66,16 @@ public class DocumentRequestService {
                 savedDocumentRequest.setFiles(new HashSet<>(savedFiles));
                 documentRequestRepository.save(savedDocumentRequest);
             }
+            
+            String title = "DOCES";
+            String subject = "Hola " + user.getName() + " recibimos tu solicitud de " + documentName;
+            String message = "<p>Estimado/a solicitante,</p>"
+                + "<p>El equipo de servicios escolares le enviará cualquier actualización sobre el estado de su solicitud a este mismo correo electrónico.</p>"
+                + "<p>Le agradecemos su paciencia y colaboración.</p>"
+                + "<p>Atentamente,</p>"
+                + "<p>El equipo de DOCES</p>";
+            
+            emailService.sendSimpleEmail(user.getEmail(), title, subject, message);
 
             return new ResponseEntity<>(new ApiResponse(savedDocumentRequest, HttpStatus.OK), HttpStatus.OK);
         } catch (Exception e) {
