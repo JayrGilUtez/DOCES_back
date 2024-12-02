@@ -89,12 +89,35 @@ public class DocumentRequestService {
             DocumentRequest documentRequest = optional.orElse(null);
             if (documentRequest != null) {
                 documentRequest.setStatus(status);
+                documentRequestRepository.save(documentRequest);
+
+                UserModel user = documentRequest.getUser();
+                if (user != null) {
+                    String subject = "Actualización de estado: Tu solicitud está ahora '" + status + "'";
+                    String message = "<h2>Estimado/a " + user.getName() + " " + user.getLastname() + "</h2>"
+                            + "<br>"
+                            + "<p>Te informamos que el estado de tu solicitud de documento ha cambiado.</p>"
+                            + "<p><strong>Detalles de la solicitud</strong></p>"
+                            + "<p>- Documento solicitado: " + documentRequest.getDocumentName() + "</p>"
+                            + "<p>- Nuevo estado: " + status + "</p>"
+                            + "<p>Este cambio significa que tu solicitud está siendo gestionada y pronto recibirás más información.</p>"
+                            + "<br>"
+                            + "<p>Si tienes alguna duda o necesitas más información, no dudes en contactarnos.</p>"
+                            + "<h3>Saludos cordiales,</h3>"
+                            + "<h3>Equipo de DOCES</h3>";
+                        try {
+                            emailService.sendSimpleEmail(user.getEmail(), "", subject, message);
+                        } catch (Exception e) {
+                            System.err.println("Error al enviar el correo");
+                        }
+                } else {
+                    throw new IllegalStateException("No se encontró un usuario asociado a la solicitud.");
+                }
                 ApiResponse response = new ApiResponse(
                         HttpStatus.OK,
                         false,
-                        "Se actualizo el status de la solicutd");
+                        "Se actualizó el status de la solicitud");
                 return new ResponseEntity<>(response, HttpStatus.OK);
-
             } else {
                 ApiResponse response = new ApiResponse(
                         HttpStatus.NOT_FOUND,
@@ -102,7 +125,6 @@ public class DocumentRequestService {
                         "Solicitud no encontrada");
                 return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
             }
-
         } catch (Exception e) {
             ApiResponse response = new ApiResponse(
                     HttpStatus.INTERNAL_SERVER_ERROR,
