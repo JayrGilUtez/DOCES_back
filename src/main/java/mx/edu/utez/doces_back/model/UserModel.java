@@ -23,9 +23,11 @@ public class UserModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String name;
+    private String surname;
     private String lastname;
     private String matricula;
     private String email;
+    private String career;
     private String password;
     private Integer cuatrimestre;
     private Character grupo;

@@ -41,8 +41,8 @@ public class InitalConfig implements CommandLineRunner {
 
         UserModel user = new UserModel();
         user.setId(1);
-        user.setName("Jayr Gil");
-        user.setLastname("Galicia Jiménez");
+        user.setName("admin");
+        user.setLastname("admin");
         user.setEmail("admin@gmail.com");
         user.setPassword(passwordEncoder.encode("$4dmin_123!"));
         user.setRole(adminRole);

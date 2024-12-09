@@ -61,7 +61,7 @@ public class UserController {
                     .orElseThrow(() -> new RuntimeException("Default role not found"));
 
             request.setRole(defaultRole);
-            request.setPassword(passwordEncoder.encode(request.getPassword()));
+            request.setPassword(passwordEncoder.encode(request.getPassword().trim()));
             this.userService.save(request);
 
             String title = "Bienvenido " + request.getName();
@@ -139,7 +139,7 @@ public class UserController {
     // Reset Password
     @PostMapping("/reset-password/{token}")
     public ResponseEntity<Object> resetPassword(@PathVariable String token, @RequestBody Map<String, String> request) {
-        String newPassword = request.get("password");
+        String newPassword = request.get("password").trim();
         PasswordResetToken resetToken = passwordRepository.findByToken(token);
         if (resetToken == null || resetToken.getExpiryDate().isBefore(LocalDateTime.now())) {
             return new ResponseEntity<>(Utilities.generateResponse(HttpStatus.BAD_REQUEST, INTERNAL_SERVER_ERROR), HttpStatus.BAD_REQUEST);
